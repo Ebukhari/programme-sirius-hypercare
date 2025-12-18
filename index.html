@@ -19,6 +19,22 @@
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; background: var(--color-bg); color: var(--color-text); line-height: 1.6; }
+        
+        /* Login Screen */
+        .login-container { display: flex; align-items: center; justify-content: center; width: 100%; height: 100vh; background: linear-gradient(135deg, var(--color-bg) 0%, var(--color-surface) 100%); }
+        .login-box { background: var(--color-surface); border: 2px solid var(--color-primary); border-radius: 8px; padding: 40px; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); }
+        .login-box h1 { color: var(--color-primary); margin-bottom: 10px; font-size: 28px; }
+        .login-box p { color: #aaa; margin-bottom: 30px; font-size: 14px; }
+        .login-form { display: flex; flex-direction: column; gap: 15px; }
+        .form-group-login { display: flex; flex-direction: column; }
+        .form-group-login label { color: #ddd; font-weight: 600; margin-bottom: 8px; font-size: 13px; }
+        .form-group-login input { padding: 10px 15px; border: 1px solid var(--color-border); border-radius: 4px; background: var(--color-bg); color: var(--color-text); font-size: 14px; }
+        .form-group-login input:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 8px rgba(50, 184, 198, 0.3); }
+        .login-btn { padding: 12px; background: var(--color-primary); color: var(--color-bg); border: none; border-radius: 4px; font-weight: 600; cursor: pointer; font-size: 14px; transition: all 0.3s ease; }
+        .login-btn:hover { background: #2a9fb0; transform: translateY(-2px); }
+        .login-error { color: var(--color-critical); font-size: 13px; margin-top: 10px; }
+        .hidden { display: none !important; }
+        
         header { background: linear-gradient(135deg, var(--color-bg) 0%, var(--color-surface) 100%); padding: 20px; border-bottom: 2px solid var(--color-primary); position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
         .header-left { display: flex; align-items: center; gap: 15px; }
         .header-left h1 { font-size: 24px; color: var(--color-primary); margin-bottom: 5px; }
@@ -26,6 +42,9 @@
         .header-right { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
         .status-indicator { display: flex; align-items: center; gap: 5px; padding: 5px 10px; background: rgba(255, 255, 255, 0.05); border-radius: 4px; font-size: 12px; }
         .status-dot { width: 8px; height: 8px; border-radius: 50%; animation: pulse 2s infinite; background: #4ade80; }
+        .user-info { display: flex; align-items: center; gap: 10px; padding: 5px 10px; background: rgba(50, 184, 198, 0.1); border-radius: 4px; font-size: 12px; }
+        .logout-btn { padding: 6px 12px; background: var(--color-critical); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.2s ease; }
+        .logout-btn:hover { background: #a01028; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
         .last-update { font-size: 11px; color: #999; }
         .container { padding: 20px; max-width: 1600px; margin: 0 auto; }
@@ -107,180 +126,215 @@
         .password-modal-content h3 { color: var(--color-critical); margin-bottom: 15px; font-size: 16px; }
         .password-modal-content p { color: #ccc; margin-bottom: 15px; font-size: 12px; }
         .password-modal-content input { width: 100%; margin-bottom: 15px; }
+        .detail-field { margin-bottom: 15px; }
+        .detail-label { color: var(--color-primary); font-weight: 600; font-size: 12px; margin-bottom: 5px; }
+        .detail-value { color: #ddd; font-size: 13px; word-wrap: break-word; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 3px; }
         @media (max-width: 768px) {
             .charts-grid { grid-template-columns: 1fr; }
             header { flex-direction: column; gap: 10px; }
-            .header-right { width: 100%; justify-content: space-between; }
+            .header-right { width: 100%; justify-content: space-between; flex-wrap: wrap; }
             table { font-size: 12px; }
             th, td { padding: 8px; }
             .stats { grid-template-columns: repeat(2, 1fr); }
             .tab-buttons { flex-wrap: wrap; }
+            .actions { flex-direction: column; }
+            .action-btn { width: 100%; text-align: center; }
+            .modal-content { max-width: 95%; padding: 15px; }
+            .login-box { padding: 25px; max-width: 90%; }
+            .login-box h1 { font-size: 22px; }
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="header-left">
-            <div>
-                <h1>Programme Sirius - Hypercare Support</h1>
-                <p id="currentDate"></p>
-            </div>
-        </div>
-        <div class="header-right">
-            <div class="status-indicator">
-                <div class="status-dot"></div>
-                <span>Live Tracking</span>
-            </div>
-            <div class="last-update">
-                Last Updated: <span id="lastUpdate">--:--</span>
-            </div>
-        </div>
-    </header>
-
-    <div class="container">
-        <div class="stats">
-            <div class="stat-card total">
-                <div class="stat-number" id="countTotal">0</div>
-                <div class="stat-label">Total Open Issues</div>
-            </div>
-            <div class="stat-card critical">
-                <div class="stat-number" id="countCritical">0</div>
-                <div class="stat-label">CRITICAL</div>
-            </div>
-            <div class="stat-card high">
-                <div class="stat-number" id="countHigh">0</div>
-                <div class="stat-label">HIGH Priority</div>
-            </div>
-            <div class="stat-card medium">
-                <div class="stat-number" id="countMedium">0</div>
-                <div class="stat-label">MEDIUM</div>
-            </div>
-            <div class="stat-card low">
-                <div class="stat-number" id="countLow">0</div>
-                <div class="stat-label">LOW</div>
-            </div>
-            <div class="stat-card closed">
-                <div class="stat-number" id="countClosed">0</div>
-                <div class="stat-label">CLOSED</div>
-            </div>
-        </div>
-
-        <div class="tab-buttons">
-            <button class="tab-btn active" onclick="switchTab('active-issues')">Active Issues</button>
-            <button class="tab-btn" onclick="switchTab('charts')">Charts &amp; Analytics</button>
-            <button class="tab-btn" onclick="switchTab('training-issues')">Training Issues</button>
-            <button class="tab-btn" onclick="switchTab('known-issues')">Known Issues &amp; Workarounds</button>
-            <button class="tab-btn" onclick="switchTab('shift-log')">Shift Log &amp; Handover</button>
-            <button class="tab-btn" onclick="switchTab('audit-log')">Audit Log</button>
-        </div>
-
-        <div id="active-issues" class="tab-content active">
-            <div class="controls">
-                <input type="text" id="searchInput" placeholder="Search by module, process, or ticket ID..." onkeyup="updateTable()">
-                <select id="severityFilter" onchange="updateTable()">
-                    <option value="">All Severities</option>
-                    <option value="Critical">Critical</option>
-                    <option value="High">High</option>
-                    <option value="Medium">Medium</option>
-                    <option value="Low">Low</option>
-                </select>
-                <select id="statusFilter" onchange="updateTable()">
-                    <option value="">All Status</option>
-                    <option value="Investigating">Investigating</option>
-                    <option value="Closed">Closed</option>
-                </select>
-                <button onclick="openNewIssueModal()">+ Log New Issue</button>
-                <button class="secondary" onclick="downloadCSV()">Export</button>
-            </div>
-
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Ticket ID</th>
-                            <th>Module</th>
-                            <th>Process</th>
-                            <th>Severity</th>
-                            <th>Status</th>
-                            <th>Owner</th>
-                            <th>Time Logged</th>
-                            <th>Duration Open</th>
-                            <th>Reopens</th>
-                            <th>Training</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="issuesTable"></tbody>
-                </table>
-            </div>
-            <div id="emptyState" class="empty-state" style="display: none;">No issues logged. Great work team!</div>
-        </div>
-
-        <div id="charts" class="tab-content">
-            <div class="charts-grid">
-                <div class="chart-container">
-                    <h3>Issues by Severity</h3>
-                    <div id="severityChart" style="color:#ddd;font-size:13px;padding:20px;text-align:center;"></div>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-box">
+            <h1>Sirius Hypercare</h1>
+            <p>Programme Sirius - Hypercare Support Portal</p>
+            <form class="login-form" onsubmit="handleLogin(event)">
+                <div class="form-group-login">
+                    <label for="loginEmail">Email Address</label>
+                    <input type="email" id="loginEmail" placeholder="your.email@altayer.com" required>
                 </div>
-                <div class="chart-container">
-                    <h3>Issues by Status</h3>
-                    <div id="statusChart" style="color:#ddd;font-size:13px;padding:20px;text-align:center;"></div>
+                <div class="form-group-login">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password" required>
                 </div>
-                <div class="chart-container">
-                    <h3>Issues by Module</h3>
-                    <div id="moduleChart" style="color:#ddd;font-size:13px;padding:20px;text-align:center;"></div>
-                </div>
-                <div class="chart-container">
-                    <h3>Reopened Issues</h3>
-                    <div id="reopenChart" style="color:#ddd;font-size:13px;padding:20px;text-align:center;"></div>
+                <button type="submit" class="login-btn">Sign In</button>
+                <div id="loginError" class="login-error"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App (Hidden Until Logged In) -->
+    <div id="mainApp" class="hidden">
+        <header>
+            <div class="header-left">
+                <div>
+                    <h1>Programme Sirius - Hypercare Support</h1>
+                    <p id="currentDate"></p>
                 </div>
             </div>
-        </div>
+            <div class="header-right">
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span>Live Tracking</span>
+                </div>
+                <div class="user-info">
+                    <span>Logged in as: <strong id="userEmail"></strong></span>
+                </div>
+                <div class="last-update">
+                    Last Updated: <span id="lastUpdate">--:--</span>
+                </div>
+                <button class="logout-btn" onclick="handleLogout()">Logout</button>
+            </div>
+        </header>
 
-        <div id="training-issues" class="tab-content">
-            <div class="controls">
-                <button onclick="filterTrainingIssues()">Refresh Training View</button>
-                <button class="secondary" onclick="downloadTrainingCSV()">Export Training Report</button>
+        <div class="container">
+            <div class="stats">
+                <div class="stat-card total">
+                    <div class="stat-number" id="countTotal">0</div>
+                    <div class="stat-label">Total Open Issues</div>
+                </div>
+                <div class="stat-card critical">
+                    <div class="stat-number" id="countCritical">0</div>
+                    <div class="stat-label">CRITICAL</div>
+                </div>
+                <div class="stat-card high">
+                    <div class="stat-number" id="countHigh">0</div>
+                    <div class="stat-label">HIGH Priority</div>
+                </div>
+                <div class="stat-card medium">
+                    <div class="stat-number" id="countMedium">0</div>
+                    <div class="stat-label">MEDIUM</div>
+                </div>
+                <div class="stat-card low">
+                    <div class="stat-number" id="countLow">0</div>
+                    <div class="stat-label">LOW</div>
+                </div>
+                <div class="stat-card closed">
+                    <div class="stat-number" id="countClosed">0</div>
+                    <div class="stat-label">CLOSED</div>
+                </div>
             </div>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Ticket ID</th>
-                            <th>Module</th>
-                            <th>Process</th>
-                            <th>Description</th>
-                            <th>Status</th>
-                            <th>Owner</th>
-                        </tr>
-                    </thead>
-                    <tbody id="trainingIssuesTable"></tbody>
-                </table>
-            </div>
-            <div id="trainingEmpty" class="empty-state" style="display: none;">No training-related issues logged.</div>
-        </div>
 
-        <div id="known-issues" class="tab-content">
-            <div class="controls">
-                <button onclick="openKnownIssueModal()">+ Add Known Issue</button>
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="switchTab(event, 'active-issues')">Active Issues</button>
+                <button class="tab-btn" onclick="switchTab(event, 'charts')">Charts &amp; Analytics</button>
+                <button class="tab-btn" onclick="switchTab(event, 'training-issues')">Training Issues</button>
+                <button class="tab-btn" onclick="switchTab(event, 'known-issues')">Known Issues &amp; Workarounds</button>
+                <button class="tab-btn" onclick="switchTab(event, 'shift-log')">Shift Log &amp; Handover</button>
+                <button class="tab-btn" onclick="switchTab(event, 'audit-log')">Audit Log</button>
             </div>
-            <div class="known-issues" id="knownIssuesContainer"></div>
-        </div>
 
-        <div id="shift-log" class="tab-content">
-            <div class="controls">
-                <button onclick="openShiftLogModal()">+ Add Shift Handover Note</button>
-            </div>
-            <div id="shiftLogContainer" style="max-height: 600px; overflow-y: auto;"></div>
-        </div>
+            <div id="active-issues" class="tab-content active">
+                <div class="controls">
+                    <input type="text" id="searchInput" placeholder="Search by module, process, or ticket ID..." onkeyup="updateTable()">
+                    <select id="severityFilter" onchange="updateTable()">
+                        <option value="">All Severities</option>
+                        <option value="Critical">Critical</option>
+                        <option value="High">High</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Low">Low</option>
+                    </select>
+                    <select id="statusFilter" onchange="updateTable()">
+                        <option value="">All Status</option>
+                        <option value="Investigating">Investigating</option>
+                        <option value="Closed">Closed</option>
+                    </select>
+                    <button onclick="openNewIssueModal()">+ Log New Issue</button>
+                    <button class="secondary" onclick="downloadCSV()">Export</button>
+                </div>
 
-        <div id="audit-log" class="tab-content">
-            <div class="controls">
-                <button class="secondary" onclick="downloadAuditLog()">Export Audit Log</button>
-                <button class="secondary" onclick="openClearAuditModal()">Clear Audit Log</button>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ticket ID</th>
+                                <th>Module</th>
+                                <th>Process</th>
+                                <th>Severity</th>
+                                <th>Status</th>
+                                <th>Owner</th>
+                                <th>Time Logged</th>
+                                <th>Duration Open</th>
+                                <th>Reopens</th>
+                                <th>Training</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="issuesTable"></tbody>
+                    </table>
+                </div>
+                <div id="emptyState" class="empty-state" style="display: none;">No issues logged. Great work team!</div>
             </div>
-            <div id="auditLogContainer" style="max-height: 700px; overflow-y: auto;"></div>
-            <div id="auditEmpty" class="empty-state" style="display: none;">No audit records yet.</div>
+
+            <div id="charts" class="tab-content">
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <h3>Issues by Severity</h3>
+                        <div id="severityChart" style="color:#ddd;font-size:13px;padding:20px;text-align:center;"></div>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Issues by Status</h3>
+                        <div id="statusChart" style="color:#ddd;font-size:13px;padding:20px;text-align:center;"></div>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Issues by Module</h3>
+                        <div id="moduleChart" style="color:#ddd;font-size:13px;padding:20px;text-align:center;"></div>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Reopened Issues</h3>
+                        <div id="reopenChart" style="color:#ddd;font-size:13px;padding:20px;text-align:center;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="training-issues" class="tab-content">
+                <div class="controls">
+                    <button onclick="filterTrainingIssues()">Refresh Training View</button>
+                    <button class="secondary" onclick="downloadTrainingCSV()">Export Training Report</button>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ticket ID</th>
+                                <th>Module</th>
+                                <th>Process</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                                <th>Owner</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trainingIssuesTable"></tbody>
+                    </table>
+                </div>
+                <div id="trainingEmpty" class="empty-state" style="display: none;">No training-related issues logged.</div>
+            </div>
+
+            <div id="known-issues" class="tab-content">
+                <div class="controls">
+                    <button onclick="openKnownIssueModal()">+ Add Known Issue</button>
+                </div>
+                <div class="known-issues" id="knownIssuesContainer"></div>
+            </div>
+
+            <div id="shift-log" class="tab-content">
+                <div class="controls">
+                    <button onclick="openShiftLogModal()">+ Add Shift Handover Note</button>
+                </div>
+                <div id="shiftLogContainer" style="max-height: 600px; overflow-y: auto;"></div>
+            </div>
+
+            <div id="audit-log" class="tab-content">
+                <div class="controls">
+                    <button class="secondary" onclick="downloadAuditLog()">Export Audit Log</button>
+                    <button class="secondary" onclick="openClearAuditModal()">Clear Audit Log</button>
+                </div>
+                <div id="auditLogContainer" style="max-height: 700px; overflow-y: auto;"></div>
+                <div id="auditEmpty" class="empty-state" style="display: none;">No audit records yet.</div>
+            </div>
         </div>
     </div>
 
@@ -290,17 +344,18 @@
             <div class="modal-header">Log New Issue</div>
             <form onsubmit="saveNewIssue(event)">
                 <div class="form-group">
-                    <label>SAP Module *</label>
+                    <label>SAP Rise S/4HANA Module *</label>
                     <select id="issueModule" required>
                         <option value="">Select Module</option>
-                        <option value="FI">Financial (FI)</option>
-                        <option value="CO">Controlling (CO)</option>
-                        <option value="MM">Materials (MM)</option>
-                        <option value="PP">Production (PP)</option>
-                        <option value="SD">Sales &amp; Distribution (SD)</option>
-                        <option value="HR">Human Resources (HR)</option>
-                        <option value="PM">Plant Maintenance (PM)</option>
-                        <option value="Integration">Integration / Interfaces</option>
+                        <option value="FI">Financial (SAP S/4HANA FI)</option>
+                        <option value="CO">Controlling (SAP S/4HANA CO)</option>
+                        <option value="MM">Materials Management (SAP S/4HANA MM)</option>
+                        <option value="PP">Production Planning (SAP S/4HANA PP)</option>
+                        <option value="SD">Sales &amp; Distribution (SAP S/4HANA SD)</option>
+                        <option value="HCM">Human Capital Management (SAP SuccessFactors)</option>
+                        <option value="PM">Plant Maintenance (SAP S/4HANA PM)</option>
+                        <option value="Integration">SAP Integration Suite (RISE)</option>
+                        <option value="Analytics">SAP Analytics Cloud</option>
                         <option value="Other">Other</option>
                     </select>
                 </div>
@@ -350,6 +405,16 @@
                     <button type="submit">Log Issue</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <div id="viewIssueModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Issue Details - <span id="viewTicketId"></span></div>
+            <div id="viewIssueContent"></div>
+            <div class="modal-footer">
+                <button type="button" class="secondary" onclick="closeModal('viewIssueModal')">Close</button>
+            </div>
         </div>
     </div>
 
@@ -498,46 +563,88 @@
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+        const auth = firebase.auth();
 
         let issues = [];
         let knownIssues = [];
         let shiftLogs = [];
         let auditLog = [];
         let pendingDeleteIssueId = null;
+        let currentUser = null;
 
-        // Real-time listeners
-        db.collection('issues').orderBy('logTime', 'desc').onSnapshot(snap => {
-            issues = [];
-            snap.forEach(doc => issues.push({ id: doc.id, ...doc.data() }));
-            updateTable();
-            updateCharts();
-            filterTrainingIssues();
-            updateStats();
+        // Auth state listener
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+                document.getElementById('userEmail').textContent = user.email;
+                startListeners();
+            } else {
+                currentUser = null;
+                document.getElementById('loginScreen').classList.remove('hidden');
+                document.getElementById('mainApp').classList.add('hidden');
+            }
         });
 
-        db.collection('knownIssues').onSnapshot(snap => {
-            knownIssues = [];
-            snap.forEach(doc => knownIssues.push({ id: doc.id, ...doc.data() }));
-            renderKnownIssues();
-        });
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('loginError');
 
-        db.collection('shiftLogs').orderBy('timestamp', 'desc').onSnapshot(snap => {
-            shiftLogs = [];
-            snap.forEach(doc => shiftLogs.push({ id: doc.id, ...doc.data() }));
-            renderShiftLogs();
-        });
+            auth.signInWithEmailAndPassword(email, password)
+                .then(() => {
+                    document.getElementById('loginEmail').value = '';
+                    document.getElementById('loginPassword').value = '';
+                    errorDiv.textContent = '';
+                })
+                .catch(err => {
+                    errorDiv.textContent = 'Login failed: ' + err.message;
+                });
+        }
 
-        db.collection('auditLog').orderBy('timestamp', 'desc').onSnapshot(snap => {
-            auditLog = [];
-            snap.forEach(doc => auditLog.push({ id: doc.id, ...doc.data() }));
-            renderAuditLog();
-        });
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                auth.signOut().then(() => {
+                    console.log('Logged out successfully');
+                }).catch(err => alert('Logout failed: ' + err.message));
+            }
+        }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        function startListeners() {
+            // Real-time listeners
+            db.collection('issues').orderBy('logTime', 'desc').onSnapshot(snap => {
+                issues = [];
+                snap.forEach(doc => issues.push({ id: doc.id, ...doc.data() }));
+                updateTable();
+                updateCharts();
+                filterTrainingIssues();
+                updateStats();
+            });
+
+            db.collection('knownIssues').onSnapshot(snap => {
+                knownIssues = [];
+                snap.forEach(doc => knownIssues.push({ id: doc.id, ...doc.data() }));
+                renderKnownIssues();
+            });
+
+            db.collection('shiftLogs').orderBy('timestamp', 'desc').onSnapshot(snap => {
+                shiftLogs = [];
+                snap.forEach(doc => shiftLogs.push({ id: doc.id, ...doc.data() }));
+                renderShiftLogs();
+            });
+
+            db.collection('auditLog').orderBy('timestamp', 'desc').onSnapshot(snap => {
+                auditLog = [];
+                snap.forEach(doc => auditLog.push({ id: doc.id, ...doc.data() }));
+                renderAuditLog();
+            });
+
             updateDate();
             setInterval(updateLastUpdate, 60000);
             updateLastUpdate();
-        });
+        }
 
         function updateDate() {
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -549,11 +656,22 @@
             document.getElementById('lastUpdate').textContent = time;
         }
 
-        function switchTab(tabName) {
+        function switchTab(event, tabName) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
+        }
+
+        async function getNextSRNumber() {
+            const configRef = db.collection('config').doc('settings');
+            const doc = await configRef.get();
+            let nextNum = 1;
+            if (doc.exists) {
+                nextNum = (doc.data().nextSRNumber || 0) + 1;
+            }
+            await configRef.set({ nextSRNumber: nextNum }, { merge: true });
+            return 'SR' + String(nextNum).padStart(3, '0');
         }
 
         function updateTable() {
@@ -578,11 +696,87 @@
                 filtered.forEach(issue => {
                     const row = document.createElement('tr');
                     const logTime = issue.logTime && issue.logTime.toDate ? issue.logTime.toDate() : new Date(issue.logTime);
-                    row.innerHTML = `<td><strong>${issue.id}</strong></td><td><span class="module-badge">${issue.module}</span></td><td>${issue.process}</td><td><span class="severity-badge ${issue.severity.toLowerCase()}">${issue.severity}</span></td><td><span class="status-badge ${issue.status.toLowerCase()}">${issue.status}</span></td><td>${issue.owner}</td><td>${logTime.toLocaleString()}</td><td style="text-align: center; font-size: 12px; color: #32b8c6; font-weight: 600;">${calculateDuration(logTime, issue.closedTime)}</td><td style="text-align: center; font-weight: 600;">${issue.reopens || 0}</td><td style="text-align: center;">${issue.isTraining ? 'YES' : 'NO'}</td><td><div class="actions"><button class="action-btn" onclick="editIssue('${issue.id}')">Edit</button>${issue.status === 'Closed' ? `<button class="action-btn" onclick="reopenIssue('${issue.id}')">Re-open</button>` : `<button class="action-btn danger" onclick="closeIssue('${issue.id}')">Close</button>`}<button class="action-btn danger" onclick="initiateDeleteTicket('${issue.id}')">Delete</button></div></td>`;
+                    row.innerHTML = `<td><strong>${issue.id}</strong></td><td><span class="module-badge">${issue.module}</span></td><td>${issue.process}</td><td><span class="severity-badge ${issue.severity.toLowerCase()}">${issue.severity}</span></td><td><span class="status-badge ${issue.status.toLowerCase()}">${issue.status}</span></td><td>${issue.owner}</td><td>${logTime.toLocaleString()}</td><td style="text-align: center; font-size: 12px; color: #32b8c6; font-weight: 600;">${calculateDuration(logTime, issue.closedTime)}</td><td style="text-align: center; font-weight: 600;">${issue.reopens || 0}</td><td style="text-align: center;">${issue.isTraining ? 'YES' : 'NO'}</td><td><div class="actions"><button class="action-btn" onclick="viewIssue('${issue.id}')">View</button><button class="action-btn" onclick="editIssue('${issue.id}')">Edit</button>${issue.status === 'Closed' ? `<button class="action-btn" onclick="reopenIssue('${issue.id}')">Re-open</button>` : `<button class="action-btn danger" onclick="closeIssue('${issue.id}')">Close</button>`}<button class="action-btn danger" onclick="initiateDeleteTicket('${issue.id}')">Delete</button></div></td>`;
                     tableBody.appendChild(row);
                 });
             }
             updateStats();
+        }
+
+        function viewIssue(issueId) {
+            const issue = issues.find(i => i.id === issueId);
+            if (!issue) return;
+
+            const logTime = issue.logTime && issue.logTime.toDate ? issue.logTime.toDate() : new Date(issue.logTime);
+            const closedTime = issue.closedTime && issue.closedTime.toDate ? issue.closedTime.toDate() : null;
+
+            let html = `
+                <div class="detail-field">
+                    <div class="detail-label">Module</div>
+                    <div class="detail-value">${issue.module}</div>
+                </div>
+                <div class="detail-field">
+                    <div class="detail-label">Process</div>
+                    <div class="detail-value">${issue.process}</div>
+                </div>
+                <div class="detail-field">
+                    <div class="detail-label">Severity</div>
+                    <div class="detail-value"><span class="severity-badge ${issue.severity.toLowerCase()}">${issue.severity}</span></div>
+                </div>
+                <div class="detail-field">
+                    <div class="detail-label">Status</div>
+                    <div class="detail-value"><span class="status-badge ${issue.status.toLowerCase()}">${issue.status}</span></div>
+                </div>
+                <div class="detail-field">
+                    <div class="detail-label">Owner</div>
+                    <div class="detail-value">${issue.owner}</div>
+                </div>
+                <div class="detail-field">
+                    <div class="detail-label">Environment</div>
+                    <div class="detail-value">${issue.env}</div>
+                </div>
+                <div class="detail-field">
+                    <div class="detail-label">Impacted Business Unit(s)</div>
+                    <div class="detail-value">${issue.impactBU || 'N/A'}</div>
+                </div>
+                <div class="detail-field">
+                    <div class="detail-label">Time Logged</div>
+                    <div class="detail-value">${logTime.toLocaleString()}</div>
+                </div>
+                ${closedTime ? `<div class="detail-field">
+                    <div class="detail-label">Time Closed</div>
+                    <div class="detail-value">${closedTime.toLocaleString()}</div>
+                </div>` : ''}
+                <div class="detail-field">
+                    <div class="detail-label">Duration Open</div>
+                    <div class="detail-value">${calculateDuration(logTime, closedTime)}</div>
+                </div>
+                <div class="detail-field">
+                    <div class="detail-label">Reopens</div>
+                    <div class="detail-value">${issue.reopens || 0}</div>
+                </div>
+                <div class="detail-field">
+                    <div class="detail-label">Training-Related</div>
+                    <div class="detail-value">${issue.isTraining ? 'Yes' : 'No'}</div>
+                </div>
+                <div class="detail-field">
+                    <div class="detail-label">Description</div>
+                    <div class="detail-value">${issue.description}</div>
+                </div>
+            `;
+
+            if (issue.comments && issue.comments.length > 0) {
+                html += '<div class="detail-field"><div class="detail-label">Comments</div><div class="comments-section">';
+                issue.comments.forEach(c => {
+                    const cTime = c.time && c.time.toDate ? c.time.toDate() : new Date(c.time);
+                    html += `<div class="comment"><div class="comment-time">${cTime.toLocaleString()}</div><div class="comment-text">${c.text}</div></div>`;
+                });
+                html += '</div></div>';
+            }
+
+            document.getElementById('viewTicketId').textContent = issue.id;
+            document.getElementById('viewIssueContent').innerHTML = html;
+            document.getElementById('viewIssueModal').classList.add('active');
         }
 
         function updateStats() {
@@ -597,7 +791,7 @@
 
         function calculateDuration(logTime, closedTime) {
             if (!logTime) return '--';
-            const now = closedTime ? (closedTime.toDate ? closedTime.toDate() : new Date(closedTime)) : new Date();
+            const now = closedTime ? (closedTime instanceof Date ? closedTime : closedTime.toDate()) : new Date();
             const start = logTime instanceof Date ? logTime : logTime.toDate();
             const diffMs = now - start;
             const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
@@ -690,9 +884,9 @@
         function openClearAuditModal() { document.getElementById('clearAuditModal').classList.add('active'); }
         function closeModal(modalId) { document.getElementById(modalId).classList.remove('active'); }
 
-        function saveNewIssue(event) {
+        async function saveNewIssue(event) {
             event.preventDefault();
-            const ticketId = "TKT-" + String(Date.now()).slice(-6);
+            const ticketId = await getNextSRNumber();
             const now = new Date();
 
             const issue = {
@@ -865,13 +1059,11 @@
         }
 
         function deleteKnownIssue(knownIssueId) {
-            db.collection('knownIssues').doc(knownIssueId).delete()
-                .then(() => addAuditEntry('DELETE_KNOWN', 'Known issue deleted'))
-                .catch(err => alert('Failed: ' + err.message));
-        }
-
-        function openClearAuditModal() {
-            document.getElementById('clearAuditModal').classList.add('active');
+            if (confirm('Delete this known issue?')) {
+                db.collection('knownIssues').doc(knownIssueId).delete()
+                    .then(() => addAuditEntry('DELETE_KNOWN', 'Known issue deleted'))
+                    .catch(err => alert('Failed: ' + err.message));
+            }
         }
 
         function cancelClearAudit() {
