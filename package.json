@@ -4,8 +4,7 @@
   "description": "Programme Sirius - Hypercare Support Hub",
   "main": "index.html",
   "scripts": {
-    "start": "echo 'Open index.html in browser'",
-    "deploy": "netlify deploy --prod"
+    "start": "echo 'Open index.html in browser'"
   },
   "keywords": ["firebase", "sirius", "hypercare", "support"],
   "author": "Al Tayer Group",
