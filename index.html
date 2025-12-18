@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programme Sirius - Hypercare Support Hub</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --color-bg: #0f2942;
+            --color-surface: #1a3f5c;
+            --color-text: #f5f5f5;
+            --color-primary: #32b8c6;
+            --color-critical: #c01530;
+            --color-high: #e67a1f;
+            --color-medium: #f4c430;
+            --color-low: #2080b0;
+            --color-closed: #207e6b;
+            --color-border: rgba(255, 255, 255, 0.1);
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+        header {
+            background: linear-gradient(135deg, var(--color-bg) 0%, var(--color-surface) 100%);
+            padding: 20px;
+            border-bottom: 2px solid var(--color-primary);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .header-left h1 { font-size: 24px; color: var(--color-primary); }
+        .header-left p { font-size: 12px; color: #aaa; margin: 0; }
+        .header-right { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+        .status-indicator { display: flex; align-items: center; gap: 5px; padding: 5px 10px; background: rgba(255,255,255,0.05); border-radius: 4px; font-size: 12px; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #4ade80; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .logout-btn { background: var(--color-primary); color: var(--color-bg); border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: 600; }
+        .logout-btn:hover { background: #2a9fb0; }
+        .container { padding: 20px; max-width: 1600px; margin: 0 auto; }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-left: 4px solid;
+            border-radius: 4px;
+            padding: 15px;
+            text-align: center;
+        }
+        .stat-card.total { border-left-color: #7c3aed; }
+        .stat-card.critical { border-left-color: var(--color-critical); }
+        .stat-card.high { border-left-color: var(--color-high); }
+        .stat-card.medium { border-left-color: var(--color-medium); }
+        .stat-card.low { border-left-color: var(--color-low); }
+        .stat-card.closed { border-left-color: var(--color-closed); }
+        .stat-number { font-size: 28px; font-weight: bold; color: var(--color-primary); }
+        .stat-label { font-size: 12px; color: #aaa; margin-top: 5px; }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        input, select, button {
+            padding: 8px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            background: var(--color-surface);
+            color: var(--color-text);
+            font-size: 13px;
+            cursor: pointer;
+        }
+        input::placeholder { color: #999; }
+        input:focus, select:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 8px rgba(50,184,198,0.2); }
+        button {
+            background: var(--color-primary);
+            color: var(--color-bg);
+            border: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        button:hover { background: #2a9fb0; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(50,184,198,0.3); }
+        button.secondary { background: transparent; color: var(--color-primary); border: 1px solid var(--color-primary); }
+        button.secondary:hover { background: rgba(50,184,198,0.1); }
+        .table-wrapper {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            overflow: hidden;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        thead {
+            background: rgba(0,0,0,0.3);
+            border-bottom: 2px solid var(--color-border);
+        }
+        th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--color-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--color-border);
+            font-size: 13px;
+        }
+        tbody tr:hover { background: rgba(50,184,198,0.05); }
+        .severity-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .severity-badge.critical { background: var(--color-critical); color: white; }
+        .severity-badge.high { background: var(--color-high); color: white; }
+        .severity-badge.medium { background: var(--color-medium); color: #000; }
+        .severity-badge.low { background: var(--color-low); color: white; }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .status-badge.investigating { background: rgba(230,122,31,0.3); color: var(--color-high); }
+        .status-badge.closed { background: rgba(100,116,139,0.3); color: #94a3b8; }
+        .module-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            background: rgba(50,184,198,0.2);
+            color: var(--color-primary);
+            font-weight: 500;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 14px;
+        }
+        .auth-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: var(--color-bg);
+            padding: 20px;
+        }
+        .auth-form {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 40px;
+            max-width: 400px;
+            width: 100%;
+        }
+        .auth-form h2 {
+            color: var(--color-primary);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .auth-form input {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        .auth-form button {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .auth-form p {
+            text-align: center;
+            font-size: 12px;
+            color: #aaa;
+            margin-top: 15px;
+        }
+        .auth-form a {
+            color: var(--color-primary);
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .error-message {
+            background: rgba(192,21,47,0.2);
+            border: 1px solid var(--color-critical);
+            color: #ff6b6b;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        .error-message.show { display: block; }
+        .last-update { font-size: 11px; color: #999; }
+        .loading { text-align: center; padding: 40px; color: var(--color-primary); }
+        @media (max-width: 768px) {
+            header { flex-direction: column; gap: 10px; }
+            .header-right { width: 100%; justify-content: space-between; }
+            table { font-size: 12px; }
+            th, td { padding: 8px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .controls { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+    <div id="loadingScreen" class="auth-container">
+        <div class="loading">
+            <h2>⏳ Loading Programme Sirius - Hypercare</h2>
+            <p>Initializing Firebase connection...</p>
+        </div>
+    </div>
+
+    <div id="authScreen" class="auth-container" style="display: none;">
+        <div class="auth-form">
+            <h2>Programme Sirius - Hypercare</h2>
+            <div class="error-message" id="authError"></div>
+            
+            <div id="loginForm">
+                <input type="email" id="loginEmail" placeholder="Email address" required>
+                <input type="password" id="loginPassword" placeholder="Password" required>
+                <button onclick="handleLogin()">Sign In</button>
+                <p>Don't have an account? <a onclick="toggleForm()">Sign Up</a></p>
+            </div>
+            
+            <div id="signupForm" style="display: none;">
+                <input type="email" id="signupEmail" placeholder="Email address" required>
+                <input type="password" id="signupPassword" placeholder="Password (min 6 chars)" required>
+                <input type="password" id="signupPasswordConfirm" placeholder="Confirm password" required>
+                <button onclick="handleSignup()">Create Account</button>
+                <p>Already have an account? <a onclick="toggleForm()">Sign In</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="appScreen" style="display: none;">
+        <header>
+            <div class="header-left">
+                <div>
+                    <h1>Programme Sirius - Hypercare Support Hub</h1>
+                    <p id="currentDate"></p>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span>Live Tracking</span>
+                </div>
+                <div class="last-update">Last Updated: <span id="lastUpdate">--:--</span></div>
+                <button class="logout-btn" onclick="handleLogout()">Logout</button>
+            </div>
+        </header>
+        
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card total">
+                    <div class="stat-number" id="countTotal">0</div>
+                    <div class="stat-label">Total Open Issues</div>
+                </div>
+                <div class="stat-card critical">
+                    <div class="stat-number" id="countCritical">0</div>
+                    <div class="stat-label">CRITICAL</div>
+                </div>
+                <div class="stat-card high">
+                    <div class="stat-number" id="countHigh">0</div>
+                    <div class="stat-label">HIGH Priority</div>
+                </div>
+                <div class="stat-card medium">
+                    <div class="stat-number" id="countMedium">0</div>
+                    <div class="stat-label">MEDIUM</div>
+                </div>
+                <div class="stat-card low">
+                    <div class="stat-number" id="countLow">0</div>
+                    <div class="stat-label">LOW</div>
+                </div>
+                <div class="stat-card closed">
+                    <div class="stat-number" id="countClosed">0</div>
+                    <div class="stat-label">CLOSED</div>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <input type="text" id="searchInput" placeholder="Search by ticket ID, module, process..." onkeyup="updateTable()">
+                <select id="severityFilter" onchange="updateTable()">
+                    <option value="">All Severities</option>
+                    <option value="Critical">Critical</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                </select>
+                <select id="statusFilter" onchange="updateTable()">
+                    <option value="">All Status</option>
+                    <option value="Investigating">Investigating</option>
+                    <option value="Closed">Closed</option>
+                </select>
+                <button onclick="alert('Feature coming soon: Log New Issue')">+ Log New Issue</button>
+                <button class="secondary" onclick="downloadCSV()">Export</button>
+            </div>
+            
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ticket ID</th>
+                            <th>Module</th>
+                            <th>Process</th>
+                            <th>Severity</th>
+                            <th>Status</th>
+                            <th>Owner</th>
+                            <th>Time Logged</th>
+                        </tr>
+                    </thead>
+                    <tbody id="issuesTable"></tbody>
+                </table>
+            </div>
+            <div id="emptyState" class="empty-state" style="display: none;">No issues logged. Great work team!</div>
+        </div>
+    </div>
+
+    <!-- Load Firebase from Official Google CDN (compat version for IE11 compatibility) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        let auth = null;
+        let db = null;
+        let currentUser = null;
+        let issues = [];
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCH7faPA_RpNYYEIcQWgqd5fVwPKMm4z0M",
+            authDomain: "sirius-hypercare.firebaseapp.com",
+            projectId: "sirius-hypercare",
+            storageBucket: "sirius-hypercare.firebasestorage.app",
+            messagingSenderId: "74660895964",
+            appId: "1:74660895964:web:50a845cdedf2d79e742819"
+        };
+
+        // Initialize Firebase
+        function initializeFirebase() {
+            try {
+                console.log('Initializing Firebase...');
+                
+                if (!window.firebase) {
+                    throw new Error('Firebase SDK not loaded. The CDN may be blocked.');
+                }
+
+                firebase.initializeApp(firebaseConfig);
+                auth = firebase.auth();
+                db = firebase.firestore();
+                console.log('✅ Firebase initialized successfully');
+
+                // Listen for auth state changes
+                auth.onAuthStateChanged(function(user) {
+                    if (user) {
+                        currentUser = user;
+                        console.log('✅ User logged in:', user.email);
+                        document.getElementById('loadingScreen').style.display = 'none';
+                        document.getElementById('authScreen').style.display = 'none';
+                        document.getElementById('appScreen').style.display = 'block';
+                        initializeApp();
+                    } else {
+                        currentUser = null;
+                        console.log('User logged out');
+                        document.getElementById('loadingScreen').style.display = 'none';
+                        document.getElementById('authScreen').style.display = 'flex';
+                        document.getElementById('appScreen').style.display = 'none';
+                    }
+                });
+
+            } catch (error) {
+                console.error('❌ Firebase initialization failed:', error.message);
+                document.getElementById('loadingScreen').innerHTML = `
+                    <div class="auth-form" style="background: rgba(255,100,100,0.1); border-color: #ff6b6b;">
+                        <h2 style="color: #ff6b6b;">⚠️ Connection Error</h2>
+                        <p style="color: #aaa; text-align: center; margin: 20px 0;">
+                            ${error.message}
+                        </p>
+                        <button onclick="location.reload()" style="width: 100%; margin-top: 20px; background: #ff6b6b; color: white;">
+                            Try Again
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function toggleForm() {
+            document.getElementById('loginForm').style.display = document.getElementById('loginForm').style.display === 'none' ? 'block' : 'none';
+            document.getElementById('signupForm').style.display = document.getElementById('signupForm').style.display === 'none' ? 'block' : 'none';
+        }
+
+        function showAuthError(message) {
+            const errorEl = document.getElementById('authError');
+            errorEl.textContent = message;
+            errorEl.classList.add('show');
+            setTimeout(() => errorEl.classList.remove('show'), 5000);
+        }
+
+        function handleLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                showAuthError('Please fill in all fields');
+                return;
+            }
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then(() => console.log('✅ Login successful'))
+                .catch(error => {
+                    console.error('❌ Login error:', error.message);
+                    showAuthError(error.message);
+                });
+        }
+
+        function handleSignup() {
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const passwordConfirm = document.getElementById('signupPasswordConfirm').value;
+            
+            if (password !== passwordConfirm) {
+                showAuthError('Passwords do not match');
+                return;
+            }
+            
+            auth.createUserWithEmailAndPassword(email, password)
+                .then(() => console.log('✅ Account created successfully'))
+                .catch(error => {
+                    console.error('❌ Signup error:', error.message);
+                    showAuthError(error.message);
+                });
+        }
+
+        function handleLogout() {
+            auth.signOut();
+        }
+
+        function initializeApp() {
+            updateDate();
+            loadIssues();
+            updateLastUpdate();
+            setInterval(updateLastUpdate, 60000);
+            setInterval(loadIssues, 3000);
+        }
+
+        function updateDate() {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', options);
+        }
+
+        function updateLastUpdate() {
+            const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('lastUpdate').textContent = time;
+        }
+
+        function loadIssues() {
+            if (!db) return;
+            db.collection('issues').orderBy('logTime', 'desc').onSnapshot(snapshot => {
+                issues = [];
+                snapshot.forEach(doc => {
+                    issues.push({ id: doc.id, ...doc.data() });
+                });
+                updateTable();
+            }, error => {
+                console.error('Firestore error:', error);
+            });
+        }
+
+        function updateTable() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const severityFilter = document.getElementById('severityFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            
+            let filtered = issues.filter(issue => {
+                const matchSearch = searchTerm === '' || 
+                    issue.id.toLowerCase().includes(searchTerm) || 
+                    (issue.module || '').toLowerCase().includes(searchTerm) || 
+                    (issue.process || '').toLowerCase().includes(searchTerm);
+                
+                const matchSeverity = severityFilter === '' || issue.severity === severityFilter;
+                const matchStatus = statusFilter === '' || issue.status === statusFilter;
+                
+                return matchSearch && matchSeverity && matchStatus;
+            });
+            
+            const tableBody = document.getElementById('issuesTable');
+            tableBody.innerHTML = '';
+            
+            if (filtered.length === 0) {
+                document.getElementById('emptyState').style.display = 'block';
+            } else {
+                document.getElementById('emptyState').style.display = 'none';
+                filtered.forEach(issue => {
+                    const row = document.createElement('tr');
+                    
+                    row.innerHTML = `
+                        <td><strong>${issue.id}</strong></td>
+                        <td><span class="module-badge">${issue.module || 'N/A'}</span></td>
+                        <td>${issue.process || 'N/A'}</td>
+                        <td><span class="severity-badge ${(issue.severity || '').toLowerCase()}">${issue.severity || 'N/A'}</span></td>
+                        <td><span class="status-badge ${(issue.status || '').toLowerCase()}">${issue.status || 'N/A'}</span></td>
+                        <td>${issue.owner || 'N/A'}</td>
+                        <td>${formatDate(issue.logTime)}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+            
+            updateStats();
+        }
+
+        function updateStats() {
+            const openIssues = issues.filter(i => i.status !== 'Closed');
+            document.getElementById('countTotal').textContent = openIssues.length;
+            document.getElementById('countCritical').textContent = issues.filter(i => i.severity === 'Critical' && i.status !== 'Closed').length;
+            document.getElementById('countHigh').textContent = issues.filter(i => i.severity === 'High' && i.status !== 'Closed').length;
+            document.getElementById('countMedium').textContent = issues.filter(i => i.severity === 'Medium' && i.status !== 'Closed').length;
+            document.getElementById('countLow').textContent = issues.filter(i => i.severity === 'Low' && i.status !== 'Closed').length;
+            document.getElementById('countClosed').textContent = issues.filter(i => i.status === 'Closed').length;
+        }
+
+        function formatDate(timestamp) {
+            if (!timestamp) return '--';
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            return date.toLocaleString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        }
+
+        function downloadCSV() {
+            let csv = 'Ticket ID,Module,Process,Severity,Status,Owner,Time Logged\n';
+            issues.forEach(issue => {
+                csv += `"${issue.id}","${issue.module}","${issue.process}","${issue.severity}","${issue.status}","${issue.owner}","${formatDate(issue.logTime)}"\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'sirius-hypercare-issues-' + new Date().toISOString().split('T')[0] + '.csv';
+            a.click();
+        }
+
+        // Wait for Firebase scripts to load, then initialize
+        window.addEventListener('load', initializeFirebase);
+    </script>
+</body>
+</html>
