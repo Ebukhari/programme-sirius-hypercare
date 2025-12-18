@@ -344,16 +344,16 @@
             <div class="modal-header">Log New Issue</div>
             <form onsubmit="saveNewIssue(event)">
                 <div class="form-group">
-                    <label>SAP Rise S/4HANA Module *</label>
+                    <label>SAP Module *</label>
                     <select id="issueModule" required>
                         <option value="">Select Module</option>
-                        <option value="FI">Financial (SAP S/4HANA FI)</option>
-                        <option value="CO">Controlling (SAP S/4HANA CO)</option>
-                        <option value="MM">Materials Management (SAP S/4HANA MM)</option>
-                        <option value="PP">Production Planning (SAP S/4HANA PP)</option>
-                        <option value="SD">Sales &amp; Distribution (SAP S/4HANA SD)</option>
-                        <option value="HCM">Human Capital Management (SAP SuccessFactors)</option>
-                        <option value="PM">Plant Maintenance (SAP S/4HANA PM)</option>
+                        <option value="FI">Financial (SAP FI)</option>
+                        <option value="CO">Controlling (SAP CO)</option>
+                        <option value="MM">Materials Management (SAP MM)</option>
+                        <option value="PP">Production Planning (SAP PP)</option>
+                        <option value="SD">Sales &amp; Distribution (SAP SD)</option>
+                        <option value="BDC">Business Data Cloud (SAP BDC)</option>
+                        <option value="Analytics">DataSphere (SAP DS)</option>
                         <option value="Integration">SAP Integration Suite (RISE)</option>
                         <option value="Analytics">SAP Analytics Cloud</option>
                         <option value="Other">Other</option>
@@ -378,13 +378,13 @@
                     <select id="issueEnv" required>
                         <option value="">Select Environment</option>
                         <option value="Production">Production</option>
-                        <option value="UAT">UAT</option>
-                        <option value="Dev">Dev</option>
+                        <option value="UAT">Quality</option>
+                        <option value="Dev">Development</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Impacted Business Unit(s)</label>
-                    <input type="text" id="issueImpactBU" placeholder="e.g., Treasury, Retail Banking">
+                    <input type="text" id="issueImpactBU" placeholder="e.g., Treasury, Finance">
                 </div>
                 <div class="form-group">
                     <label>Issue Description / Error Message *</label>
