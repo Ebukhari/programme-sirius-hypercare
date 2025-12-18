@@ -1,8 +1,0 @@
-[build]
-  command = "echo 'Deploying static site'"
-  publish = "."
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
