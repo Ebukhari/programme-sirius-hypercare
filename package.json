@@ -1,0 +1,13 @@
+{
+  "name": "programme-sirius-hypercare",
+  "version": "1.0.0",
+  "description": "Programme Sirius - Hypercare Support Hub",
+  "main": "index.html",
+  "scripts": {
+    "start": "echo 'Open index.html in browser'",
+    "deploy": "netlify deploy --prod"
+  },
+  "keywords": ["firebase", "sirius", "hypercare", "support"],
+  "author": "Al Tayer Group",
+  "license": "ISC"
+}
