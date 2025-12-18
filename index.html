@@ -129,168 +129,19 @@
         .detail-field { margin-bottom: 15px; }
         .detail-label { color: var(--color-primary); font-weight: 600; font-size: 12px; margin-bottom: 5px; }
         .detail-value { color: #ddd; font-size: 13px; word-wrap: break-word; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 3px; }
-        
-        /* Mobile Navigation */
-        .mobile-nav-toggle { display: none; }
-        .hamburger-btn { display: none; }
-        
-        /* Extra Small: 320px - 480px (Phones) */
-        @media (max-width: 480px) {
-            header { padding: 12px; gap: 8px; }
-            .header-left h1 { font-size: 18px; }
-            .header-right { gap: 8px; font-size: 11px; }
-            .container { padding: 12px; }
-            .stats { grid-template-columns: 1fr; gap: 10px; }
-            .stat-number { font-size: 22px; }
-            .stat-label { font-size: 11px; }
-            .controls { gap: 6px; flex-direction: column; }
-            .controls input, .controls select { width: 100%; }
-            .controls button { width: 100%; }
-            table { font-size: 11px; }
-            th, td { padding: 6px 4px; }
-            .severity-badge, .status-badge, .module-badge { font-size: 10px; padding: 2px 4px; }
-            .action-btn { font-size: 10px; padding: 3px 6px; margin: 2px; }
-            .modal-content { width: 95%; padding: 15px; }
-            .modal-header { font-size: 14px; }
-            .login-box { padding: 20px; }
-            .login-box h1 { font-size: 20px; }
-            .tab-btn { font-size: 11px; padding: 8px 10px; }
-            .hide-mobile { display: none !important; }
-            
-            .mobile-nav-toggle { 
-                display: flex; 
-                padding: 0; 
-                background: transparent;
-                border: none;
-                cursor: pointer;
-                position: fixed;
-                right: 15px;
-                top: 70px;
-                z-index: 50;
-            }
-            
-            .hamburger-btn {
-                display: flex;
-                flex-direction: column;
-                gap: 5px;
-                background: var(--color-primary);
-                border: none;
-                padding: 8px;
-                border-radius: 4px;
-                cursor: pointer;
-            }
-            
-            .hamburger-btn span {
-                width: 20px;
-                height: 2px;
-                background: var(--color-bg);
-                transition: all 0.3s ease;
-            }
-            
-            .mobile-menu {
-                display: none;
-                position: fixed;
-                top: 0;
-                right: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.5);
-                z-index: 40;
-            }
-            
-            .mobile-menu.active {
-                display: flex;
-            }
-            
-            .mobile-menu-content {
-                background: var(--color-surface);
-                width: 80%;
-                max-width: 300px;
-                height: 100%;
-                margin-left: auto;
-                padding: 20px;
-                display: flex;
-                flex-direction: column;
-                gap: 15px;
-                overflow-y: auto;
-            }
-            
-            .close-btn {
-                align-self: flex-end;
-                background: none;
-                border: none;
-                color: var(--color-primary);
-                font-size: 24px;
-                cursor: pointer;
-            }
-            
-            .mobile-menu-tabs {
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            .mobile-menu-tabs button {
-                background: transparent;
-                border: 1px solid var(--color-primary);
-                color: var(--color-primary);
-                padding: 12px 15px;
-                border-radius: 4px;
-                cursor: pointer;
-                transition: all 0.2s ease;
-                font-weight: 600;
-            }
-            
-            .mobile-menu-tabs button:active {
-                background: rgba(50, 184, 198, 0.2);
-            }
-            
-            .tab-buttons { display: none; }
-        }
-
-        /* Small: 481px - 640px (Large Phones) */
-        @media (min-width: 481px) and (max-width: 640px) {
-            header { padding: 15px; }
-            .header-left h1 { font-size: 20px; }
-            .container { padding: 15px; }
-            .stats { grid-template-columns: repeat(2, 1fr); }
-            .controls { gap: 8px; flex-direction: column; }
-            .controls input, .controls select, .controls button { width: 100%; }
+        @media (max-width: 768px) {
+            .charts-grid { grid-template-columns: 1fr; }
+            header { flex-direction: column; gap: 10px; }
+            .header-right { width: 100%; justify-content: space-between; flex-wrap: wrap; }
             table { font-size: 12px; }
             th, td { padding: 8px; }
-            .action-btn { font-size: 11px; }
-            .modal-content { width: 90%; }
-            .tab-btn { font-size: 12px; }
-        }
-
-        /* Tablets: 641px - 1024px */
-        @media (min-width: 641px) and (max-width: 1024px) {
-            .container { max-width: 95%; padding: 20px; }
-            .stats { grid-template-columns: repeat(3, 1fr); }
-            .charts-grid { grid-template-columns: 1fr; }
-            .controls { gap: 12px; flex-wrap: wrap; }
-            .table-wrapper { overflow-x: auto; }
-            .known-issues { grid-template-columns: repeat(2, 1fr); }
-            .hide-tablet { display: none !important; }
-        }
-
-        /* Desktop: 1025px+ */
-        @media (min-width: 1025px) {
-            .container { max-width: 1400px; padding: 20px auto; }
-            .stats { grid-template-columns: repeat(6, 1fr); }
-            .charts-grid { grid-template-columns: repeat(2, 1fr); }
-            .controls { gap: 15px; flex-wrap: wrap; }
-            .controls input { flex: 1; min-width: 200px; }
-            .known-issues { grid-template-columns: repeat(3, 1fr); }
-            .table-wrapper { overflow-x: visible; }
-            .hide-desktop { display: none !important; }
-        }
-
-        /* Large Desktop: 1441px+ */
-        @media (min-width: 1441px) {
-            .container { max-width: 1600px; margin: 0 auto; }
-            .stats { grid-template-columns: repeat(6, 1fr); gap: 20px; }
-            .charts-grid { grid-template-columns: repeat(3, 1fr); }
+            .stats { grid-template-columns: repeat(2, 1fr); }
+            .tab-buttons { flex-wrap: wrap; }
+            .actions { flex-direction: column; }
+            .action-btn { width: 100%; text-align: center; }
+            .modal-content { max-width: 95%; padding: 15px; }
+            .login-box { padding: 25px; max-width: 90%; }
+            .login-box h1 { font-size: 22px; }
         }
     </style>
 </head>
@@ -303,7 +154,7 @@
             <form class="login-form" onsubmit="handleLogin(event)">
                 <div class="form-group-login">
                     <label for="loginEmail">Email Address</label>
-                    <input type="email" id="loginEmail" placeholder="youremail@altayer.com" required>
+                    <input type="email" id="loginEmail" placeholder="your.email@altayer.com" required>
                 </div>
                 <div class="form-group-login">
                     <label for="loginPassword">Password</label>
@@ -338,30 +189,6 @@
                 <button class="logout-btn" onclick="handleLogout()">Logout</button>
             </div>
         </header>
-
-        <!-- Mobile Navigation Toggle -->
-        <div class="mobile-nav-toggle">
-            <button class="hamburger-btn" onclick="toggleMobileMenu()" id="hamburgerBtn">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-        </div>
-
-        <!-- Mobile Menu -->
-        <div class="mobile-menu" id="mobileMenu">
-            <div class="mobile-menu-content">
-                <button class="close-btn" onclick="toggleMobileMenu()">✕</button>
-                <div class="mobile-menu-tabs">
-                    <button onclick="switchTab(event, 'active-issues'); toggleMobileMenu()">Active Issues</button>
-                    <button onclick="switchTab(event, 'charts'); toggleMobileMenu()">Charts</button>
-                    <button onclick="switchTab(event, 'training-issues'); toggleMobileMenu()">Training</button>
-                    <button onclick="switchTab(event, 'known-issues'); toggleMobileMenu()">Known Issues</button>
-                    <button onclick="switchTab(event, 'shift-log'); toggleMobileMenu()">Shift Log</button>
-                    <button onclick="switchTab(event, 'audit-log'); toggleMobileMenu()">Audit Log</button>
-                </div>
-            </div>
-        </div>
 
         <div class="container">
             <div class="stats">
@@ -431,8 +258,8 @@
                                 <th>Owner</th>
                                 <th>Time Logged</th>
                                 <th>Duration Open</th>
-                                <th class="hide-mobile">Reopens</th>
-                                <th class="hide-mobile">Training</th>
+                                <th>Reopens</th>
+                                <th>Training</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -517,7 +344,7 @@
             <div class="modal-header">Log New Issue</div>
             <form onsubmit="saveNewIssue(event)">
                 <div class="form-group">
-                    <label>SAP Rise S/4HANA Module *</label>
+                    <label>SAP Module *</label>
                     <select id="issueModule" required>
                         <option value="">Select Module</option>
                         <option value="FI">Financial (SAP FI)</option>
@@ -785,20 +612,8 @@
             }
         }
 
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobileMenu');
-            menu.classList.toggle('active');
-        }
-
-        document.addEventListener('click', function(event) {
-            const menu = document.getElementById('mobileMenu');
-            const hamburger = document.getElementById('hamburgerBtn');
-            if (menu && hamburger && !menu.contains(event.target) && !hamburger.contains(event.target)) {
-                menu.classList.remove('active');
-            }
-        });
-
         function startListeners() {
+            // Real-time listeners
             db.collection('issues').orderBy('logTime', 'desc').onSnapshot(snap => {
                 issues = [];
                 snap.forEach(doc => issues.push({ id: doc.id, ...doc.data() }));
@@ -859,24 +674,6 @@
             return 'SR' + String(nextNum).padStart(3, '0');
         }
 
-        function calculateDuration(logTime, closedTime) {
-            if (!logTime) return '--';
-            const now = closedTime ? (closedTime instanceof Date ? closedTime : closedTime.toDate()) : new Date();
-            const start = logTime instanceof Date ? logTime : logTime.toDate();
-            const diffMs = now - start;
-            const diffMinutes = Math.floor(diffMs / (1000 * 60));
-            const diffHours = Math.floor(diffMinutes / 60);
-            const diffDays = Math.floor(diffHours / 24);
-            
-            if (diffDays > 0) {
-                return diffDays + 'd ' + (diffHours % 24) + 'h ' + (diffMinutes % 60) + 'm';
-            } else if (diffHours > 0) {
-                return diffHours + 'h ' + (diffMinutes % 60) + 'm';
-            } else {
-                return diffMinutes + 'm';
-            }
-        }
-
         function updateTable() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const severityFilter = document.getElementById('severityFilter').value;
@@ -899,7 +696,7 @@
                 filtered.forEach(issue => {
                     const row = document.createElement('tr');
                     const logTime = issue.logTime && issue.logTime.toDate ? issue.logTime.toDate() : new Date(issue.logTime);
-                    row.innerHTML = `<td><strong>${issue.id}</strong></td><td><span class="module-badge">${issue.module}</span></td><td>${issue.process}</td><td><span class="severity-badge ${issue.severity.toLowerCase()}">${issue.severity}</span></td><td><span class="status-badge ${issue.status.toLowerCase()}">${issue.status}</span></td><td>${issue.owner}</td><td>${logTime.toLocaleString()}</td><td style="text-align: center; font-size: 12px; color: #32b8c6; font-weight: 600;">${calculateDuration(logTime, issue.closedTime)}</td><td class="hide-mobile" style="text-align: center; font-weight: 600;">${issue.reopens || 0}</td><td class="hide-mobile" style="text-align: center;">${issue.isTraining ? 'YES' : 'NO'}</td><td><div class="actions"><button class="action-btn" onclick="viewIssue('${issue.id}')">View</button><button class="action-btn" onclick="editIssue('${issue.id}')">Edit</button>${issue.status === 'Closed' ? `<button class="action-btn" onclick="reopenIssue('${issue.id}')">Re-open</button>` : `<button class="action-btn danger" onclick="closeIssue('${issue.id}')">Close</button>`}<button class="action-btn danger" onclick="initiateDeleteTicket('${issue.id}')">Delete</button></div></td>`;
+                    row.innerHTML = `<td><strong>${issue.id}</strong></td><td><span class="module-badge">${issue.module}</span></td><td>${issue.process}</td><td><span class="severity-badge ${issue.severity.toLowerCase()}">${issue.severity}</span></td><td><span class="status-badge ${issue.status.toLowerCase()}">${issue.status}</span></td><td>${issue.owner}</td><td>${logTime.toLocaleString()}</td><td style="text-align: center; font-size: 12px; color: #32b8c6; font-weight: 600;">${calculateDuration(logTime, issue.closedTime)}</td><td style="text-align: center; font-weight: 600;">${issue.reopens || 0}</td><td style="text-align: center;">${issue.isTraining ? 'YES' : 'NO'}</td><td><div class="actions"><button class="action-btn" onclick="viewIssue('${issue.id}')">View</button><button class="action-btn" onclick="editIssue('${issue.id}')">Edit</button>${issue.status === 'Closed' ? `<button class="action-btn" onclick="reopenIssue('${issue.id}')">Re-open</button>` : `<button class="action-btn danger" onclick="closeIssue('${issue.id}')">Close</button>`}<button class="action-btn danger" onclick="initiateDeleteTicket('${issue.id}')">Delete</button></div></td>`;
                     tableBody.appendChild(row);
                 });
             }
@@ -991,6 +788,26 @@
             document.getElementById('countLow').textContent = issues.filter(i => i.severity === 'Low' && i.status !== 'Closed').length;
             document.getElementById('countClosed').textContent = issues.filter(i => i.status === 'Closed').length;
         }
+
+function calculateDuration(logTime, closedTime) {
+    if (!logTime) return '--';
+    const now = closedTime ? (closedTime instanceof Date ? closedTime : closedTime.toDate()) : new Date();
+    const start = logTime instanceof Date ? logTime : logTime.toDate();
+    const diffMs = now - start;
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));  // ← NEW: Calculate minutes
+    const diffHours = Math.floor(diffMinutes / 60);         // ← CHANGED: Use diffMinutes
+    const diffDays = Math.floor(diffHours / 24);
+    
+    // ← NEW: 3-tier logic with minutes
+    if (diffDays > 0) {
+        return diffDays + 'd ' + (diffHours % 24) + 'h ' + (diffMinutes % 60) + 'm';
+    } else if (diffHours > 0) {
+        return diffHours + 'h ' + (diffMinutes % 60) + 'm';
+    } else {
+        return diffMinutes + 'm';
+    }
+}
+
 
         function updateCharts() {
             const severityChart = document.getElementById('severityChart');
